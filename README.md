@@ -1,6 +1,6 @@
 # Spotify Jukebox
 
-This simple Node.js application is a demonstration of how to use the Facebook Messenger and Spotify APIs together to create a 'Jukebox Bot'.
+> This simple Node.js application is a demonstration of how to use the Facebook Messenger and Spotify APIs together to create a 'Jukebox Bot'.
 
 # .env variables
 
@@ -13,4 +13,4 @@ The included .env file contains placeholder keys which you will need to provide.
  - Run `npm start` to launch the app
 
 
-> When the application launches, follow the link in the console window to authenticate with Spotify
+When the application launches, follow the link in the console window to authenticate with Spotify
