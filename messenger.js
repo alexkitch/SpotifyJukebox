@@ -10,7 +10,14 @@ class Messenger {
     receivedMessage(event) {
         // Inform the user that we've read their message 
         this.sendReadReceipt(event.sender.id);
-        this.searchMusic(event.sender.id, event.message.text);
+
+        // Here I'm just treating quick-reply buttons as postback buttons, to avoid repeating code
+        if (event.message.quick_reply != null) {
+            return this.receivedPostback({ sender: event.sender, postback: event.message.quick_reply });
+        }
+        else {
+            this.searchMusic(event.sender.id, event.message.text);
+        }
     }
 
     async receivedPostback(event) {
@@ -35,7 +42,7 @@ class Messenger {
         }
     }
 
-    async searchMusic(sender, terms, skip = 0, limit = 4) {
+    async searchMusic(sender, terms, skip = 0, limit = 10) {
         // Begin a 'typing' indicator to show that we're working on a response
         this.sendTypingIndicator(sender, true);
 
@@ -60,24 +67,27 @@ class Messenger {
                 attachment: {
                     type: "template",
                     payload: {
-                        template_type: "list",
-                        top_element_style: "compact",
+                        template_type: "generic",
                         elements: [],
-                        buttons: []
                     }
-                }
+                },
+                quick_replies: []
             };
 
             // Add the more button if there were enough results. We provide the button
             // with all of the data it needs to be able to call this search function again and
             // get the next batch of results
             if (showMoreButton) {
-                message.attachment.payload.buttons.push(this.generatePostbackButton("More", {
-                    command: Commands.SEARCH_MORE,
-                    terms: terms,
-                    skip: skip + limit,
-                    limit: limit
-                }));
+                message.quick_replies = [{
+                    content_type: "text",
+                    title: "More Results",
+                    payload: JSON.stringify({ 
+                        command: Commands.SEARCH_MORE, 
+                        terms: terms, 
+                        skip: skip + limit, 
+                        limit: limit 
+                    })
+                }];
             }
 
             // Build a list of buttons for each result track
